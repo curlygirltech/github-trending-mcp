@@ -1,4 +1,4 @@
-# github-trend-mcp
+# github-trending-MCP
 
 A Model Context Protocol (MCP) server that gives Claude live visibility into what the open source community is actively building. Search GitHub for emerging repositories by topic, summarize project READMEs, and compare multiple repos to surface ecosystem patterns -- all through natural language.
 
@@ -6,7 +6,7 @@ A Model Context Protocol (MCP) server that gives Claude live visibility into wha
 
 ## Why This Exists
 
-GitHub's official trending page is a black box. This MCP uses the GitHub Search API to build a more transparent and configurable version of "trending" -- recently created repositories ranked by star velocity within a topic area. The result is a research workflow where you can ask Claude questions like:
+This MCP uses the GitHub Search API to build a more transparent and configurable version of "trending" -- recently created repositories ranked by star velocity within a topic area. The result is a research workflow where you can ask Claude questions like:
 
 - "What are the most-starred AI agent repos created in the last two weeks?"
 - "Summarize what this repo actually does"
@@ -18,7 +18,7 @@ GitHub's official trending page is a black box. This MCP uses the GitHub Search 
 
 - **Python** -- core language
 - **MCP Python SDK** -- exposes tools to Claude via the Model Context Protocol
-- **httpx** -- async HTTP client for GitHub API requests
+- **httpx** -- HTTP client for GitHub API requests
 - **GitHub Search API** -- the data source (official, authenticated, reliable)
 - **python-dotenv** -- environment variable management for your GitHub token
 
@@ -31,7 +31,7 @@ Searches GitHub for recently created repositories in a given topic area, sorted 
 
 ```
 topic: "ai-agents"
-time_range_days: 14
+time_range: 14
 ```
 
 ### `summarize_repo`
@@ -53,11 +53,12 @@ repo_urls: ["https://github.com/owner/repo-a", "https://github.com/owner/repo-b"
 ## Project Structure
 
 ```
-github-trend-mcp/
-├── server.py          # MCP server and tool definitions
-├── github.py          # GitHub API client functions
-├── requirements.txt   # Dependencies
-├── .env.example       # Environment variable template
+github-trending-MCP/
+├── src/
+│   ├── __init__.py
+│   └── server.py          # MCP server and tool definitions
+├── requirements.txt       # Dependencies
+├── .env.example           # Environment variable template
 └── README.md
 ```
 
@@ -67,12 +68,14 @@ github-trend-mcp/
 
 **1. Clone the repo**
 ```bash
-git clone https://github.com/your-username/github-trend-mcp.git
-cd github-trend-mcp
+git clone https://github.com/your-username/github-trending-MCP.git
+cd github-trending-MCP
 ```
 
-**2. Install dependencies**
+**2. Create a virtual environment and install dependencies**
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -90,18 +93,21 @@ GITHUB_TOKEN=your_token_here
 
 **4. Connect to Claude**
 
-Add this server to your Claude Desktop or Claude Code MCP config:
+Add this server to your Claude Code MCP config. Replace the paths with the absolute path to your cloned repo:
 
 ```json
 {
   "mcpServers": {
-    "github-trend-mcp": {
-      "command": "python",
-      "args": ["path/to/github-trend-mcp/server.py"]
+    "github-trending": {
+      "type": "stdio",
+      "command": "/absolute/path/to/github-trending-MCP/.venv/bin/python",
+      "args": ["/absolute/path/to/github-trending-MCP/src/server.py"]
     }
   }
 }
 ```
+
+In Claude Code, you can add this via the command palette with `/mcp` or by editing your project config directly.
 
 ---
 
